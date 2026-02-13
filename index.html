@@ -1,12 +1,521 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Bizim Dünyamız</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Nunito:wght@300;400;600;800&family=Creepster&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #fff0f3;
+            color: #4a4a4a;
+            overflow-x: hidden;
+            padding-bottom: 80px;
+            transition: background-color 0.8s ease, color 0.8s ease;
+        }
+
+        /* --- LOGIN SCREEN --- */
+        #login-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #fff0f3;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s;
+        }
+
+        /* --- DARK MODE (ANILAR SAYFASI İÇİN) --- */
+        body.dark-mode {
+            background-color: #0f0f0f;
+            background-image: radial-gradient(circle at center, #2a0a0a 0%, #000000 100%);
+            color: #d1d1d1;
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="%23ff0000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/><path d="M9 9h.01"/><path d="M15 9h.01"/><path d="M12 12s-1 1-1 3 1 1 1 1 1-1 1-3-1-1-1-1z"/></svg>') 16 16, auto;
+        }
+
+        body.dark-mode .glass-card {
+            background: rgba(20, 0, 0, 0.6);
+            border: 1px solid rgba(139, 0, 0, 0.3);
+            box-shadow: 0 0 30px rgba(139, 0, 0, 0.2);
+            color: #e0e0e0;
+        }
+
+        body.dark-mode h1, body.dark-mode h2, body.dark-mode h3 {
+            color: #8a0000;
+            text-shadow: 0 0 5px rgba(255, 0, 0, 0.4);
+        }
+
+        /* Örümcek Ağları */
+        .spider-web {
+            display: none;
+            position: fixed;
+            width: 200px;
+            height: 200px;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.6;
+        }
+        .spider-web-left { top: 0; left: 0; transform: rotate(0deg); }
+        .spider-web-right { top: 0; right: 0; transform: rotate(90deg); }
+        
+        body.dark-mode .spider-web { display: block; filter: invert(1) drop-shadow(0 0 5px red); }
+
+        /* Fotoğraf Efektleri (Dark Mode) */
+        body.dark-mode .photo-frame {
+            border: 8px solid #2b2b2b;
+            filter: sepia(0.4) contrast(1.2) grayscale(0.2);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.9);
+            transition: all 0.5s;
+        }
+        body.dark-mode .photo-frame:hover {
+            filter: sepia(0) contrast(1.1);
+            transform: scale(1.02) rotate(0deg) !important;
+            border-color: #500000;
+        }
+
+        /* Diğer Stiller */
+        h1, h2, h3, .romantic-font { font-family: 'Dancing Script', cursive; }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+            transition: all 0.5s ease;
+        }
+
+        /* Sayfa Geçiş Animasyonları */
+        .page-section { display: none !important; animation: fadeIn 0.8s ease-in-out; }
+        .page-section.active { display: block !important; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; filter: blur(5px); }
+            to { opacity: 1; filter: blur(0); }
+        }
+
+        .heart-beat { animation: heartbeat 1.5s infinite; }
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        /* Floating Hearts (Normal Mod) */
+        .floating-heart {
+            position: fixed;
+            color: #ff4d6d;
+            font-size: 20px;
+            animation: floatUp 4s linear infinite;
+            opacity: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+        body.dark-mode .floating-heart {
+            color: #5c0000;
+            text-shadow: 0 0 2px black;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(100vh) scale(0.5); opacity: 0; }
+            20% { opacity: 0.8; }
+            100% { transform: translateY(-10vh) scale(1.2); opacity: 0; }
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            padding: 10px 20px;
+            display: flex;
+            gap: 20px;
+            box-shadow: 0 10px 25px rgba(255, 77, 109, 0.2);
+            z-index: 50;
+            border: 1px solid rgba(255, 200, 200, 0.5);
+            transition: all 0.5s;
+        }
+        
+        /* Dark Mode Navigasyon */
+        body.dark-mode .bottom-nav {
+            background: rgba(20, 0, 0, 0.9);
+            border-color: #4a0000;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.8);
+        }
+        body.dark-mode .nav-item { color: #5c5c5c; }
+        body.dark-mode .nav-item.active { color: #cc0000; background: #2b0505; }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #ff8fa3;
+            cursor: pointer;
+            transition: all 0.3s;
+            padding: 5px 10px;
+            border-radius: 15px;
+        }
+        .nav-item.active {
+            color: #ff4d6d;
+            background: #fff0f3;
+            transform: translateY(-5px);
+        }
+        .nav-item span { font-size: 10px; margin-top: 2px; font-weight: 700; }
+        
+        .music-player {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 60;
+            background: white;
+            padding: 10px;
+            border-radius: 50%;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.5s;
+        }
+        body.dark-mode .music-player {
+            background: #1a0000;
+            border: 1px solid #500000;
+        }
+        .spin { animation: spin 4s linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* YouTube Player'ı Gizle ama DOM'da Tut */
+        #youtube-player-container {
+            position: absolute;
+            top: -9999px;
+            left: -9999px;
+            width: 1px;
+            height: 1px;
+            opacity: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+    </style>
 </head>
-<body>
-    <h1>Current Date and Time (UTC)</h1>
-    <p>2026-02-13 19:24:15</p>
+<body class="relative overflow-hidden-y">
+
+    <!-- GİRİŞ EKRANI (PASSWORD PROTECT) -->
+    <div id="login-overlay">
+        <div class="text-center">
+            <i data-lucide="lock" class="w-16 h-16 text-red-400 mx-auto mb-4"></i>
+            <h2 class="text-3xl text-red-500 romantic-font mb-6">Giriş Yap Sevgilim</h2>
+            <div class="flex flex-col gap-4 items-center">
+                <input type="password" id="passwordInput" placeholder="Şifremiz..." class="px-4 py-2 rounded-full border-2 border-red-200 focus:outline-none focus:border-red-400 text-center w-48">
+                <button onclick="checkPassword()" class="bg-red-400 text-white px-6 py-2 rounded-full hover:bg-red-500 transition font-bold shadow-lg transform hover:scale-105">
+                    Giriş
+                </button>
+                <p id="errorMsg" class="text-red-600 text-sm hidden">Yanlış şifre :(</p>
+                <p class="text-gray-400 text-xs mt-4">İpucu: Biz olduğumuz gün (GGAA)</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Örümcek Ağları (SVG) - Sadece Dark Mode'da görünür -->
+    <svg class="spider-web spider-web-left" viewBox="0 0 100 100" fill="none" stroke="currentColor">
+        <path d="M0 0 L100 100 M20 0 L100 80 M50 0 L100 50 M80 0 L100 20 M0 20 L80 100 M0 50 L50 100 M0 80 L20 100" stroke-width="0.5"/>
+        <path d="M20 10 Q30 30 50 20 Q70 40 90 30" stroke-width="0.5" fill="none"/>
+        <path d="M10 20 Q30 50 60 40 Q80 70 100 50" stroke-width="0.5" fill="none"/>
+    </svg>
+    <svg class="spider-web spider-web-right" viewBox="0 0 100 100" fill="none" stroke="currentColor">
+        <path d="M100 0 L0 100 M80 0 L0 80 M50 0 L0 50 M20 0 L0 20 M100 20 L20 100 M100 50 L50 100 M100 80 L80 100" stroke-width="0.5"/>
+        <path d="M80 10 Q70 30 50 20 Q30 40 10 30" stroke-width="0.5" fill="none"/>
+    </svg>
+
+    <div id="hearts-container"></div>
+    
+    <!-- Müzik Butonu (YouTube'u kontrol edecek) -->
+    <div class="music-player" id="musicBtn" onclick="toggleMusic()">
+        <i data-lucide="music" class="text-red-500"></i>
+    </div>
+    
+    <!-- YOUTUBE PLAYER CONTAINER -->
+    <div id="youtube-player-container">
+        <div id="youtube-player"></div>
+    </div>
+
+    <!-- SAYFA 1: ANA SAYFA -->
+    <section id="home" class="page-section active">
+        <div class="min-h-screen flex flex-col justify-center px-4 pt-10">
+            <div class="glass-card p-8 md:p-12 max-w-lg mx-auto text-center shadow-xl">
+                <i data-lucide="heart" class="w-20 h-20 text-red-500 mx-auto mb-6 heart-beat fill-current"></i>
+                <h1 class="text-5xl text-red-600 mb-2">14 Şubat</h1>
+                <h2 class="text-3xl text-gray-700 mb-6 romantic-font">Kutlu Olsun Sevgilim</h2>
+                <p class="text-gray-600 mb-8">Seni tanıdığım günden beri zaman çok daha güzel akıyor. İşte seninle geçen süremiz:</p>
+                <div class="grid grid-cols-4 gap-2 text-center mb-8">
+                    <div class="bg-red-50 p-2 rounded-lg border border-red-100"><span id="days" class="block text-xl md:text-2xl font-bold text-red-500">0</span><span class="text-[10px] md:text-xs text-gray-500 uppercase">Gün</span></div>
+                    <div class="bg-red-50 p-2 rounded-lg border border-red-100"><span id="hours" class="block text-xl md:text-2xl font-bold text-red-500">0</span><span class="text-[10px] md:text-xs text-gray-500 uppercase">Saat</span></div>
+                    <div class="bg-red-50 p-2 rounded-lg border border-red-100"><span id="minutes" class="block text-xl md:text-2xl font-bold text-red-500">0</span><span class="text-[10px] md:text-xs text-gray-500 uppercase">Dk</span></div>
+                    <div class="bg-red-50 p-2 rounded-lg border border-red-100"><span id="seconds" class="block text-xl md:text-2xl font-bold text-red-500">0</span><span class="text-[10px] md:text-xs text-gray-500 uppercase">Sn</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SAYFA 2: HİKAYEMİZ -->
+    <section id="story" class="page-section min-h-screen pt-24 px-4 pb-20">
+        <h2 class="text-4xl text-center text-red-600 mb-10 romantic-font">Bizim Hikayemiz</h2>
+        <div class="max-w-2xl mx-auto relative border-l-4 border-red-200 ml-6 md:ml-10 space-y-10">
+            <div class="relative pl-8">
+                <div class="absolute -left-3.5 top-2 w-6 h-6 bg-red-500 rounded-full border-4 border-white shadow"></div>
+                <div class="glass-card p-5 hover:scale-[1.02] transition">
+                    <span class="inline-block bg-red-100 text-red-600 px-3 py-1 rounded-full text-xs font-bold mb-2">10 Ekim 2023</span>
+                    <h3 class="text-xl font-bold text-gray-800">İlk Tanışma</h3>
+                    <p class="text-gray-600 mt-2 text-sm">Hayatımın dönüm noktası. Seninle ilk konuştuğumuz o anı asla unutmayacağım.</p>
+                </div>
+            </div>
+            <div class="relative pl-8">
+                <div class="absolute -left-3.5 top-2 w-6 h-6 bg-red-500 rounded-full border-4 border-white shadow"></div>
+                <div class="glass-card p-5 hover:scale-[1.02] transition border-red-300 border-2">
+                    <span class="inline-block bg-red-100 text-red-600 px-3 py-1 rounded-full text-xs font-bold mb-2">15 Mart 2024</span>
+                    <h3 class="text-xl font-bold text-gray-800">Biz Olduk ❤️</h3>
+                    <p class="text-gray-600 mt-2 text-sm">Resmen "biz" olduğumuz gün.</p>
+                </div>
+            </div>
+             <div class="relative pl-8">
+                <div class="absolute -left-3.5 top-2 w-6 h-6 bg-red-500 rounded-full border-4 border-white shadow"></div>
+                <div class="glass-card p-5 hover:scale-[1.02] transition">
+                    <span class="inline-block bg-red-100 text-red-600 px-3 py-1 rounded-full text-xs font-bold mb-2">14 Şubat</span>
+                    <h3 class="text-xl font-bold text-gray-800">Mesafeler Engel Değil</h3>
+                    <p class="text-gray-600 mt-2 text-sm">Şu an yan yana değiliz ama kalbim tamamen seninle.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SAYFA 3: NEDEN SEN & GELECEK -->
+    <section id="reasons" class="page-section min-h-screen pt-24 px-4 pb-20">
+        <h2 class="text-4xl text-center text-red-600 mb-8 romantic-font">Neden Sen?</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto mb-12">
+            <div class="glass-card p-6 text-center">
+                <i data-lucide="smile" class="w-10 h-10 text-red-400 mx-auto mb-3"></i>
+                <h3 class="font-bold text-lg mb-2">Gülüşün</h3>
+                <p class="text-sm text-gray-600">En kötü günümü bile aydınlatan o gülüşün.</p>
+            </div>
+            <div class="glass-card p-6 text-center">
+                <i data-lucide="sun" class="w-10 h-10 text-red-400 mx-auto mb-3"></i>
+                <h3 class="font-bold text-lg mb-2">Enerjin</h3>
+                <p class="text-sm text-gray-600">Hayatıma kattığın renk.</p>
+            </div>
+        </div>
+        <h2 class="text-3xl text-center text-red-600 mb-6 romantic-font">Gelecek Listemiz</h2>
+        <div class="glass-card p-6 max-w-2xl mx-auto">
+            <ul class="space-y-4">
+                <li class="flex items-start gap-3"><div class="mt-1 min-w-[24px] w-6 h-6 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-xs">✓</div><span class="text-gray-500 line-through">Veletlerin adını FSMVÜ oldurmak</span></li>
+                <li class="flex items-start gap-3"><div class="mt-1 min-w-[24px] w-6 h-6 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-xs">✓</div><span class="text-gray-500 line-through">Yağmurlu soğuk bir sonbahar akşamı metrobüs gişesinde sarılmak</span></li>
+                <li class="flex items-start gap-3"><div class="mt-1 min-w-[24px] w-6 h-6 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-xs">✓</div><span class="text-gray-500 line-through">Birlikte yemek yapmak</span></li>
+                <li class="flex items-start gap-3"><div class="mt-1 min-w-[24px] w-6 h-6 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-xs">✓</div><span class="text-gray-500 line-through">Birlikte Harry Potter izlemek</span></li>
+                <li class="flex items-start gap-3"><div class="mt-1 min-w-[24px] w-6 h-6 rounded-full border-2 border-red-300 text-red-400 flex items-center justify-center text-xs"></div><span class="text-gray-700">Galata kulesine çıkmak</span></li>
+                <li class="flex items-start gap-3"><div class="mt-1 min-w-[24px] w-6 h-6 rounded-full border-2 border-red-300 text-red-400 flex items-center justify-center text-xs"></div><span class="text-gray-700">İlginç ritüellerle düğün yapıp altınları toplamak</span></li>
+                <li class="flex items-start gap-3"><div class="mt-1 min-w-[24px] w-6 h-6 rounded-full border-2 border-red-300 text-red-400 flex items-center justify-center text-xs"></div><span class="text-gray-700">Üst seviye insan olmak</span></li>
+                <li class="flex items-start gap-3"><div class="mt-1 min-w-[24px] w-6 h-6 rounded-full border-2 border-red-300 text-red-400 flex items-center justify-center text-xs"></div><span class="text-gray-700">Birbirini seven yaşlılar olmak</span></li>
+                <li class="flex items-start gap-3"><div class="mt-1 min-w-[24px] w-6 h-6 rounded-full border-2 border-red-300 text-red-400 flex items-center justify-center text-xs"></div><span class="text-gray-700">Sonsuza kadar rahat içinde akıp gitmek</span></li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- SAYFA 4: GALERİ (MİSTİK & DARK TASARIM) -->
+    <section id="gallery" class="page-section min-h-screen pt-24 px-4 pb-20">
+        <h2 class="text-5xl text-center text-red-800 mb-12 romantic-font drop-shadow-lg" style="text-shadow: 2px 2px 4px #000;">Karanlık Anılar</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            <!-- Foto 1 (Lanetli Çerçeve) -->
+            <div class="photo-frame relative transform rotate-2 bg-black p-1 shadow-2xl">
+                <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-60 z-10"></div>
+                <img src="https://images.unsplash.com/photo-1534954553104-88cb75be7748?q=80&w=600" class="w-full h-80 object-cover opacity-90">
+                <i data-lucide="skull" class="absolute bottom-4 right-4 text-red-700 w-6 h-6 z-20 opacity-80"></i>
+                <p class="absolute bottom-4 left-4 text-gray-300 z-20 romantic-font text-xl">Ruhumun Aynası...</p>
+            </div>
+            
+             <!-- Foto 2 (Lanetli Çerçeve) -->
+             <div class="photo-frame relative transform -rotate-1 bg-black p-1 shadow-2xl mt-8 md:mt-0">
+                <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-60 z-10"></div>
+                <img src="https://images.unsplash.com/photo-1605494236975-a8645063777d?q=80&w=600" class="w-full h-80 object-cover opacity-90">
+                <i data-lucide="flame" class="absolute bottom-4 right-4 text-orange-800 w-6 h-6 z-20 opacity-80"></i>
+                <p class="absolute bottom-4 left-4 text-gray-300 z-20 romantic-font text-xl">Cehennem kadar sıcak...</p>
+            </div>
+
+             <!-- Mektup Kutusu (Dark Version) -->
+             <div class="md:col-span-2 glass-card p-10 mt-8 text-center relative overflow-hidden">
+                <!-- Arka plan kan lekesi efekti (CSS Gradient) -->
+                <div class="absolute top-0 right-0 w-32 h-32 bg-red-900 rounded-full blur-3xl opacity-20 -mr-10 -mt-10"></div>
+                
+                <i data-lucide="ghost" class="w-10 h-10 text-red-800 mx-auto mb-4 animate-bounce"></i>
+                <p class="text-gray-300 italic text-lg leading-relaxed font-serif">
+                    "Seninle yanmaya hazırım. Bu karanlık dünyada tek ışığım, tek tutkum, tek günahım sensin. 
+                    Mesafeler sadece bedenen ayrı düşürür, ruhlarımız çoktan birbirine dolandı."
+                </p>
+                <div class="mt-6 font-bold text-red-700 text-xl romantic-font">- Ruh Eşin</div>
+             </div>
+        </div>
+    </section>
+
+    <!-- ALT NAVİGASYON -->
+    <nav class="bottom-nav">
+        <div class="nav-item active" onclick="showPage('home', this)">
+            <i data-lucide="home" width="20"></i>
+            <span>Ev</span>
+        </div>
+        <div class="nav-item" onclick="showPage('story', this)">
+            <i data-lucide="calendar-heart" width="20"></i>
+            <span>Hikaye</span>
+        </div>
+        <div class="nav-item" onclick="showPage('reasons', this)">
+            <i data-lucide="star" width="20"></i>
+            <span>Neden?</span>
+        </div>
+        <!-- Galeri butonu farklı renkte olabilir -->
+        <div class="nav-item" onclick="showPage('gallery', this)">
+            <i data-lucide="skull" width="20"></i>
+            <span>Anılar</span>
+        </div>
+    </nav>
+
+    <script>
+        lucide.createIcons();
+
+        // ŞİFRE KONTROLÜ
+        function checkPassword() {
+            const input = document.getElementById("passwordInput").value;
+            // BURADAN ŞİFREYİ DEĞİŞTİREBİLİRSİN
+            const password = "1503"; 
+            
+            if (input === password) {
+                // Şifre doğru, ekranı kaldır
+                document.getElementById("login-overlay").style.opacity = "0";
+                setTimeout(() => {
+                    document.getElementById("login-overlay").style.display = "none";
+                }, 500);
+            } else {
+                // Şifre yanlış
+                document.getElementById("errorMsg").classList.remove("hidden");
+            }
+        }
+
+        function showPage(pageId, element) {
+            // Dark Mode Kontrolü
+            const body = document.body;
+            
+            if (pageId === 'gallery') {
+                body.classList.add('dark-mode');
+            } else {
+                body.classList.remove('dark-mode');
+            }
+
+            // Sayfaları Yönet
+            document.querySelectorAll('.page-section').forEach(page => {
+                page.classList.remove('active');
+            });
+            document.getElementById(pageId).classList.add('active');
+
+            // Navigasyon Yönet
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            element.classList.add('active');
+            
+            lucide.createIcons();
+            window.scrollTo(0,0);
+        }
+
+        // Tarih Sayacı
+        const startDate = new Date(2024, 2, 15); 
+        function updateCounter() {
+            const now = new Date();
+            const diff = now - startDate;
+            if (diff < 0) return;
+
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+            document.getElementById("days").innerText = days;
+            document.getElementById("hours").innerText = hours;
+            document.getElementById("minutes").innerText = minutes;
+            document.getElementById("seconds").innerText = seconds;
+        }
+        setInterval(updateCounter, 1000);
+        updateCounter();
+
+        // --- YOUTUBE API ENTEGRASYONU (GÜNCELLENDİ) ---
+        var player;
+        var isPlaying = false;
+        var musicBtn = document.getElementById("musicBtn");
+
+        var tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('youtube-player', {
+                height: '1',  // 0 yapma, bazı tarayıcılar engeller
+                width: '1',
+                videoId: 'qU9mHegkTc4',
+                playerVars: {
+                    'autoplay': 0,
+                    'controls': 0,
+                    'disablekb': 1,
+                    'fs': 0,
+                    'loop': 1,
+                    'playlist': 'qU9mHegkTc4',
+                    'origin': window.location.origin, // Güvenlik için önemli
+                    'host': 'https://www.youtube.com'
+                },
+                events: {
+                    'onReady': onPlayerReady
+                }
+            });
+        }
+
+        function onPlayerReady(event) {
+            console.log("Müzik player hazır.");
+        }
+
+        function toggleMusic() {
+            if (!player || typeof player.playVideo !== 'function') {
+                console.log("Player henüz hazır değil veya yüklenemedi.");
+                return;
+            }
+
+            if (isPlaying) {
+                player.pauseVideo();
+                musicBtn.classList.remove("spin");
+                musicBtn.innerHTML = '<i data-lucide="music" class="text-red-500"></i>';
+            } else {
+                player.playVideo();
+                musicBtn.classList.add("spin");
+                musicBtn.innerHTML = '<i data-lucide="pause" class="text-red-500"></i>';
+            }
+            lucide.createIcons();
+            isPlaying = !isPlaying;
+        }
+
+        // Kalp Animasyonu
+        function createHeart() {
+            const heart = document.createElement("div");
+            heart.classList.add("floating-heart");
+            heart.innerHTML = "❤";
+            heart.style.left = Math.random() * 100 + "vw";
+            heart.style.animationDuration = Math.random() * 2 + 3 + "s";
+            document.getElementById("hearts-container").appendChild(heart);
+            setTimeout(() => { heart.remove(); }, 5000);
+        }
+        setInterval(createHeart, 400);
+    </script>
 </body>
 </html>
