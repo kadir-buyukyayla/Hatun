@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Bizim Dünyamız</title>
+    <!-- Konfeti Efekti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Nunito:wght@300;400;600;800&family=Creepster&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -13,13 +15,13 @@
             font-family: 'Nunito', sans-serif;
             background-color: #fff0f3;
             color: #4a4a4a;
-            overflow-x: hidden; /* Yatay kaydırmayı engelle */
+            overflow-x: hidden;
             padding-bottom: 80px;
             transition: background-color 0.8s ease, color 0.8s ease;
-            touch-action: pan-y; /* Mobilde dikey kaydırmaya izin ver ama yatayı engelle */
+            touch-action: pan-y;
         }
 
-        /* --- LOGIN SCREEN --- */
+        /* --- GİRİŞ EKRANI --- */
         #login-overlay {
             position: fixed;
             top: 0;
@@ -35,13 +37,24 @@
             transition: opacity 0.5s;
         }
 
-        /* --- DARK MODE (ANILAR SAYFASI İÇİN) --- */
+        /* --- DARK MODE (GERÇEK EĞLENCE) --- */
         body.dark-mode {
             background-color: #0f0f0f;
             background-image: radial-gradient(circle at center, #2a0a0a 0%, #000000 100%);
             color: #d1d1d1;
-            /* Özel Lanetli Cursor */
-            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="%23ff0000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/><path d="M9 9h.01"/><path d="M15 9h.01"/><path d="M12 12s-1 1-1 3 1 1 1 1 1-1 1-3-1-1-1-1z"/></svg>') 16 16, auto;
+            /* Normal duruş: İşaret Parmağı */
+            cursor: url('https://cdn.custom-cursor.com/db/pointer/32/Dumbledore_Pointer.png'), auto;
+        }
+
+        /* Tıklanabilir alanlarda Asa (Elder Wand) görünsün */
+        body.dark-mode a, 
+        body.dark-mode button, 
+        body.dark-mode .nav-item, 
+        body.dark-mode .music-player, 
+        body.dark-mode .draggable-photo,
+        body.dark-mode .lever-ball,
+        body.dark-mode #spinBtn {
+            cursor: url('https://cdn.custom-cursor.com/db/cursor/32/Dumbledore_Elder_Wand_Cursor.png'), pointer !important;
         }
 
         body.dark-mode .glass-card {
@@ -56,189 +69,189 @@
             text-shadow: 0 0 5px rgba(255, 0, 0, 0.4);
         }
 
-        /* Örümcek Ağları */
-        .spider-web {
-            display: none;
-            position: fixed;
-            width: 200px;
-            height: 200px;
-            pointer-events: none;
-            z-index: 0;
-            opacity: 0.6;
-        }
-        .spider-web-left { top: 0; left: 0; transform: rotate(0deg); }
-        .spider-web-right { top: 0; right: 0; transform: rotate(90deg); }
-        body.dark-mode .spider-web { display: block; filter: invert(1) drop-shadow(0 0 5px red); }
-
-        /* --- SÜRÜKLENEBİLİR FOTOĞRAFLAR --- */
-        #photo-pile-container {
-            position: relative;
-            width: 100%;
-            height: 80vh; /* Ekranın çoğunu kaplasın */
-            overflow: hidden; /* Taşmayı engelle */
-            margin-top: 20px;
-            border-radius: 20px;
-            /* Masa dokusu hissi verelim */
-            background: rgba(0,0,0,0.2); 
-            box-shadow: inset 0 0 50px rgba(0,0,0,0.8);
-        }
-
-        .draggable-photo {
-            position: absolute;
-            width: 200px; /* Fotoğraf boyutu */
-            padding: 10px 10px 40px 10px; /* Polaroid alt boşluğu */
-            background: white;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
-            transform-origin: center;
-            cursor: grab;
-            transition: transform 0.2s, box-shadow 0.2s;
-            user-select: none; /* Metin seçimini engelle */
-            touch-action: none; /* Mobilde sayfa kaydırmayı engelle */
-        }
-
-        .draggable-photo:active {
-            cursor: grabbing;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.7);
-            transform: scale(1.05); /* Tutunca hafif büyüsün */
-            z-index: 1000 !important; /* En öne gelsin */
-        }
-
-        .draggable-photo img {
-            width: 100%;
-            height: auto;
-            pointer-events: none; /* Resmin sürüklenmesini engelle, div sürüklensin */
-            display: block;
-            border: 1px solid #ddd;
-        }
-
-        /* Dark Mode'da Fotoğraflar */
-        body.dark-mode .draggable-photo {
-            background: #1a1a1a;
-            border: 1px solid #333;
-            color: #ccc;
-        }
-        body.dark-mode .draggable-photo img {
-            filter: sepia(0.3) contrast(1.2);
-        }
-
-        /* Diğer Stiller */
-        h1, h2, h3, .romantic-font { font-family: 'Dancing Script', cursive; }
-        
-        .glass-card {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(12px);
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
-            transition: all 0.5s ease;
-        }
-
-        .page-section { display: none !important; animation: fadeIn 0.8s ease-in-out; }
-        .page-section.active { display: block !important; }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; filter: blur(5px); }
-            to { opacity: 1; filter: blur(0); }
-        }
-
-        .heart-beat { animation: heartbeat 1.5s infinite; }
-        @keyframes heartbeat {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
-
-        .floating-heart {
-            position: fixed;
-            color: #ff4d6d;
-            font-size: 20px;
-            animation: floatUp 4s linear infinite;
-            opacity: 0;
-            z-index: 0;
-            pointer-events: none;
-        }
-        body.dark-mode .floating-heart { color: #5c0000; text-shadow: 0 0 2px black; }
-        @keyframes floatUp {
-            0% { transform: translateY(100vh) scale(0.5); opacity: 0; }
-            20% { opacity: 0.8; }
-            100% { transform: translateY(-10vh) scale(1.2); opacity: 0; }
-        }
-
-        .bottom-nav {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
-            border-radius: 30px;
-            padding: 10px 20px;
-            display: flex;
-            gap: 20px;
-            box-shadow: 0 10px 25px rgba(255, 77, 109, 0.2);
-            z-index: 50;
-            border: 1px solid rgba(255, 200, 200, 0.5);
-            transition: all 0.5s;
-        }
-        body.dark-mode .bottom-nav { background: rgba(20, 0, 0, 0.9); border-color: #4a0000; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.8); }
-        body.dark-mode .nav-item { color: #5c5c5c; }
-        body.dark-mode .nav-item.active { color: #cc0000; background: #2b0505; }
-
-        .nav-item {
+        /* --- SLOT MAKİNESİ TASARIMI --- */
+        .slot-machine-container {
             display: flex;
             flex-direction: column;
             align-items: center;
-            color: #ff8fa3;
-            cursor: pointer;
-            transition: all 0.3s;
-            padding: 5px 10px;
-            border-radius: 15px;
+            margin-top: 40px;
+            padding-bottom: 40px;
+            position: relative;
         }
+
+        .slot-machine {
+            position: relative;
+            width: 280px;
+            background: linear-gradient(180deg, #2d3436 0%, #000000 40%, #63171b 100%);
+            border-radius: 20px 20px 15px 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8), inset 0 0 15px rgba(100, 0, 0, 0.3);
+            border: 1px solid #5c1818;
+            padding: 40px 20px 60px 20px;
+            text-align: center;
+        }
+
+        .slot-top {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 240px;
+            height: 40px;
+            background: linear-gradient(180deg, #c0392b 0%, #8e44ad 100%);
+            border-radius: 50% 50% 0 0;
+            border: 2px solid #581313;
+            z-index: 1;
+        }
+
+        .siren {
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 20px;
+            background: radial-gradient(circle at 30% 30%, #ff7675, #c0392b);
+            border-radius: 5px 5px 0 0;
+            border: 1px solid #962c22;
+            z-index: 2;
+            animation: glow 1s infinite alternate;
+        }
+        @keyframes glow { from { box-shadow: 0 0 5px red; } to { box-shadow: 0 0 20px red; } }
+
+        .window {
+            background-color: #1a1a1a;
+            border: 4px solid #4a0d0d;
+            border-radius: 10px;
+            padding: 5px;
+            display: flex;
+            justify-content: space-between;
+            box-shadow: inset 0 5px 10px rgba(0,0,0,0.8);
+            position: relative;
+            z-index: 10;
+        }
+
+        .reel {
+            width: 70px;
+            height: 100px;
+            background: #f0f0f0;
+            border-right: 1px solid #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            overflow: hidden;
+            position: relative;
+            color: #333;
+        }
+        .reel:last-child { border-right: none; }
+        
+        .lever-container {
+            position: absolute; right: -30px; top: 60px; width: 30px; height: 100px;
+        }
+        .lever-base {
+            width: 15px; height: 40px; background: #4a0d0d;
+            border-radius: 0 5px 5px 0; position: absolute; left: 0; top: 20px;
+            box-shadow: inset 2px 2px 5px rgba(0,0,0,0.5);
+        }
+        .lever-stick {
+            width: 8px; height: 70px;
+            background: linear-gradient(to right, #bdc3c7, #7f8c8d);
+            position: absolute; left: 15px; top: -20px;
+            transform-origin: bottom center;
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border-radius: 4px;
+        }
+        .lever-ball {
+            width: 30px; height: 30px;
+            background: radial-gradient(circle at 30% 30%, #ff7675, #920b0b);
+            border-radius: 50%; position: absolute; top: -25px; left: -11px;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+        }
+        .lever-pulled { transform: scaleY(0.5) rotateX(60deg); }
+
+        .base-plate {
+            position: absolute; bottom: -15px; left: 50%; transform: translateX(-50%);
+            width: 280px; height: 30px;
+            background: linear-gradient(to bottom, #4a0d0d, #2b0505);
+            border-radius: 10px; z-index: 0; border: 1px solid #000;
+        }
+
+        .slot-controls { margin-top: 25px; display: flex; flex-direction: column; align-items: center; gap: 15px; }
+        #spinBtn {
+            padding: 12px 40px; font-size: 18px; font-weight: bold;
+            background-color: #920b0b; color: white; border: 1px solid #ff4d4d;
+            border-radius: 8px; box-shadow: 0 4px #520000;
+            transition: transform 0.1s;
+        }
+        #spinBtn:active { transform: translateY(2px); box-shadow: 0 2px #520000; }
+        
+        .slot-message {
+            font-size: 18px; font-weight: bold; color: #ffcccc;
+            min-height: 30px; text-shadow: 0 0 5px #ff0000;
+        }
+
+        .word-symbol { font-family: 'Arial Black', sans-serif !important; font-size: 20px !important; color: #c0392b; -webkit-text-stroke: 0.5px #000; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; }
+        .heart-symbol { color: #e74c3c; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.2)); }
+        .blur { filter: blur(5px); opacity: 0.8; animation: shake 0.1s infinite; }
+        @keyframes shake { 0% { transform: translateY(0); } 50% { transform: translateY(-5px); } 100% { transform: translateY(5px); } }
+
+        /* --- GENEL TASARIM --- */
+        .spider-web { display: none; position: fixed; width: 200px; height: 200px; pointer-events: none; z-index: 0; opacity: 0.6; }
+        .spider-web-left { top: 0; left: 0; }
+        .spider-web-right { top: 0; right: 0; transform: rotate(90deg); }
+        body.dark-mode .spider-web { display: block; filter: invert(1) drop-shadow(0 0 5px red); }
+
+        #photo-pile-container {
+            position: relative; width: 100%; height: 60vh;
+            overflow: hidden; margin-top: 20px; border-radius: 20px;
+            background: rgba(0,0,0,0.2); box-shadow: inset 0 0 50px rgba(0,0,0,0.8);
+        }
+        .draggable-photo {
+            position: absolute; width: 180px; padding: 10px 10px 35px 10px;
+            background: white; box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            transform-origin: center; transition: transform 0.2s, box-shadow 0.2s;
+            user-select: none; touch-action: none;
+        }
+        .draggable-photo:active { box-shadow: 0 20px 40px rgba(0,0,0,0.7); transform: scale(1.05); z-index: 1000 !important; }
+        .draggable-photo img { width: 100%; height: auto; pointer-events: none; display: block; border: 1px solid #ddd; }
+        body.dark-mode .draggable-photo { background: #1a1a1a; border: 1px solid #333; color: #ccc; }
+
+        .page-section { display: none !important; animation: fadeIn 0.8s ease-in-out; }
+        .page-section.active { display: block !important; }
+        @keyframes fadeIn { from { opacity: 0; filter: blur(5px); } to { opacity: 1; filter: blur(0); } }
+        
+        .floating-heart { position: fixed; color: #ff4d6d; font-size: 20px; animation: floatUp 4s linear infinite; opacity: 0; z-index: 0; pointer-events: none; }
+        body.dark-mode .floating-heart { color: #5c0000; text-shadow: 0 0 2px black; }
+        @keyframes floatUp { 0% { transform: translateY(100vh) scale(0.5); opacity: 0; } 20% { opacity: 0.8; } 100% { transform: translateY(-10vh) scale(1.2); opacity: 0; } }
+
+        .bottom-nav { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); border-radius: 30px; padding: 10px 20px; display: flex; gap: 20px; box-shadow: 0 10px 25px rgba(255, 77, 109, 0.2); z-index: 50; border: 1px solid rgba(255, 200, 200, 0.5); transition: all 0.5s; }
+        body.dark-mode .bottom-nav { background: rgba(20, 0, 0, 0.9); border-color: #4a0000; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.8); }
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: #ff8fa3; cursor: pointer; transition: all 0.3s; padding: 5px 10px; border-radius: 15px; }
         .nav-item.active { color: #ff4d6d; background: #fff0f3; transform: translateY(-5px); }
+        body.dark-mode .nav-item.active { color: #cc0000; background: #2b0505; }
         .nav-item span { font-size: 10px; margin-top: 2px; font-weight: 700; }
         
-        .music-player {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 60;
-            background: white;
-            padding: 10px;
-            border-radius: 50%;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            cursor: pointer;
-            transition: all 0.5s;
-        }
+        .music-player { position: fixed; top: 20px; right: 20px; z-index: 60; background: white; padding: 10px; border-radius: 50%; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: all 0.5s; }
         body.dark-mode .music-player { background: #1a0000; border: 1px solid #500000; }
         .spin { animation: spin 4s linear infinite; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
-
-        #youtube-player-container {
-            position: absolute;
-            top: -9999px;
-            left: -9999px;
-            width: 1px;
-            height: 1px;
-            opacity: 0;
-            pointer-events: none;
-            overflow: hidden;
-        }
+        #youtube-player-container { position: absolute; top: -9999px; left: -9999px; width: 1px; height: 1px; opacity: 0; pointer-events: none; overflow: hidden; }
     </style>
 </head>
-<body class="relative overflow-hidden-y">
+<body class="relative">
 
     <!-- GİRİŞ EKRANI -->
     <div id="login-overlay">
-        <div class="text-center">
+        <div class="text-center p-6">
             <i data-lucide="lock" class="w-16 h-16 text-red-400 mx-auto mb-4"></i>
-            <h2 class="text-3xl text-red-500 romantic-font mb-6">Giriş Yap Sevgilim</h2>
+            <h2 class="text-3xl text-red-500 romantic-font mb-6 font-bold">Giriş Yap</h2>
             <div class="flex flex-col gap-4 items-center">
-                <input type="password" id="passwordInput" placeholder="Şifremiz..." class="px-4 py-2 rounded-full border-2 border-red-200 focus:outline-none focus:border-red-400 text-center w-48">
-                <button onclick="checkPassword()" class="bg-red-400 text-white px-6 py-2 rounded-full hover:bg-red-500 transition font-bold shadow-lg transform hover:scale-105">
+                <input type="password" id="passwordInput" placeholder="Şifremiz..." class="px-4 py-2 rounded-full border-2 border-red-200 focus:outline-none focus:border-red-400 text-center w-56 text-lg">
+                <button onclick="checkPassword()" class="bg-red-400 text-white px-8 py-2 rounded-full hover:bg-red-500 transition font-bold shadow-lg transform hover:scale-105">
                     Giriş
                 </button>
                 <p id="errorMsg" class="text-red-600 text-sm hidden">Yanlış şifre :(</p>
-                <p class="text-gray-400 text-xs mt-4">İpucu: Biz olduğumuz gün (GGAA)</p>
+                <p class="text-gray-400 text-xs mt-4">İpucu: sevgili olma tarihimiz (GGAA)</p>
             </div>
         </div>
     </div>
@@ -246,12 +259,9 @@
     <!-- ÖRÜMCEK AĞLARI -->
     <svg class="spider-web spider-web-left" viewBox="0 0 100 100" fill="none" stroke="currentColor">
         <path d="M0 0 L100 100 M20 0 L100 80 M50 0 L100 50 M80 0 L100 20 M0 20 L80 100 M0 50 L50 100 M0 80 L20 100" stroke-width="0.5"/>
-        <path d="M20 10 Q30 30 50 20 Q70 40 90 30" stroke-width="0.5" fill="none"/>
-        <path d="M10 20 Q30 50 60 40 Q80 70 100 50" stroke-width="0.5" fill="none"/>
     </svg>
     <svg class="spider-web spider-web-right" viewBox="0 0 100 100" fill="none" stroke="currentColor">
         <path d="M100 0 L0 100 M80 0 L0 80 M50 0 L0 50 M20 0 L0 20 M100 20 L20 100 M100 50 L50 100 M100 80 L80 100" stroke-width="0.5"/>
-        <path d="M80 10 Q70 30 50 20 Q30 40 10 30" stroke-width="0.5" fill="none"/>
     </svg>
 
     <div id="hearts-container"></div>
@@ -260,15 +270,13 @@
     </div>
     <div id="youtube-player-container"><div id="youtube-player"></div></div>
 
-    <!-- 1. EV -->
+    <!-- SAYICI -->
     <section id="home" class="page-section active">
         <div class="min-h-screen flex flex-col justify-center px-4 pt-10">
             <div class="glass-card p-8 md:p-12 max-w-lg mx-auto text-center shadow-xl">
-                <i data-lucide="heart" class="w-20 h-20 text-red-500 mx-auto mb-6 heart-beat fill-current"></i>
-                <h1 class="text-5xl text-red-600 mb-2">14 Şubat</h1>
-                <h2 class="text-3xl text-gray-700 mb-6 romantic-font">Kutlu Olsun Sevgilim</h2>
-                <p class="text-gray-600 mb-8">Seni tanıdığım günden beri zaman çok daha güzel akıyor. İşte seninle geçen süremiz:</p>
-                <div class="grid grid-cols-4 gap-2 text-center mb-8">
+                <i data-lucide="heart" class="w-20 h-20 text-red-500 mx-auto mb-6 animate-pulse fill-current"></i>
+                <h1 class="text-4xl md:text-5xl text-red-600 mb-2 font-bold">14 Şubat Tuğba günün kutlu olsun sevgilim</h1>
+                <div class="grid grid-cols-4 gap-2 text-center mb-8 mt-8">
                     <div class="bg-red-50 p-2 rounded-lg border border-red-100"><span id="days" class="block text-xl md:text-2xl font-bold text-red-500">0</span><span class="text-[10px] md:text-xs text-gray-500 uppercase">Gün</span></div>
                     <div class="bg-red-50 p-2 rounded-lg border border-red-100"><span id="hours" class="block text-xl md:text-2xl font-bold text-red-500">0</span><span class="text-[10px] md:text-xs text-gray-500 uppercase">Saat</span></div>
                     <div class="bg-red-50 p-2 rounded-lg border border-red-100"><span id="minutes" class="block text-xl md:text-2xl font-bold text-red-500">0</span><span class="text-[10px] md:text-xs text-gray-500 uppercase">Dk</span></div>
@@ -278,98 +286,110 @@
         </div>
     </section>
 
-    <!-- 2. HİKAYEMİZ -->
+    <!-- HİKAYE -->
     <section id="story" class="page-section min-h-screen pt-24 px-4 pb-20">
-        <h2 class="text-4xl text-center text-red-600 mb-10 romantic-font">Bizim Hikayemiz</h2>
+        <h2 class="text-3xl md:text-4xl text-center text-red-600 mb-10 romantic-font">Dudu ve Bubu ile ilgili bilinen önemli milat taşları</h2>
         <div class="max-w-2xl mx-auto relative border-l-4 border-red-200 ml-6 md:ml-10 space-y-10">
             <div class="relative pl-8">
                 <div class="absolute -left-3.5 top-2 w-6 h-6 bg-red-500 rounded-full border-4 border-white shadow"></div>
                 <div class="glass-card p-5 hover:scale-[1.02] transition">
                     <span class="inline-block bg-red-100 text-red-600 px-3 py-1 rounded-full text-xs font-bold mb-2">10 Ekim 2023</span>
-                    <h3 class="text-xl font-bold text-gray-800">İlk Tanışma</h3>
-                    <p class="text-gray-600 mt-2 text-sm">Hayatımın dönüm noktası.</p>
+                    <h3 class="text-xl font-bold text-gray-800">Meeting</h3>
+                    <p class="text-gray-600 mt-2 text-sm">Laboratuvarda çok başarılısın.</p>
                 </div>
             </div>
             <div class="relative pl-8">
                 <div class="absolute -left-3.5 top-2 w-6 h-6 bg-red-500 rounded-full border-4 border-white shadow"></div>
                 <div class="glass-card p-5 hover:scale-[1.02] transition border-red-300 border-2">
                     <span class="inline-block bg-red-100 text-red-600 px-3 py-1 rounded-full text-xs font-bold mb-2">15 Mart 2024</span>
-                    <h3 class="text-xl font-bold text-gray-800">Biz Olduk ❤️</h3>
-                    <p class="text-gray-600 mt-2 text-sm">Resmen "biz" olduğumuz gün.</p>
+                    <h3 class="text-xl font-bold text-gray-800">Happidi Hubbidi</h3>
+                    <p class="text-gray-600 mt-2 text-sm">Başarıyla sevgili olduk.</p>
                 </div>
             </div>
             <div class="relative pl-8">
                 <div class="absolute -left-3.5 top-2 w-6 h-6 bg-red-500 rounded-full border-4 border-white shadow"></div>
-                <div class="glass-card p-5 hover:scale-[1.02] transition">
-                    <span class="inline-block bg-red-100 text-red-600 px-3 py-1 rounded-full text-xs font-bold mb-2">14 Şubat</span>
-                    <h3 class="text-xl font-bold text-gray-800">Mesafeler Engel Değil</h3>
-                    <p class="text-gray-600 mt-2 text-sm">Kalbim tamamen seninle.</p>
+                <div class="glass-card p-5 hover:scale-[1.02] transition border-red-500 border-2 shadow-lg">
+                    <span class="inline-block bg-red-100 text-red-600 px-3 py-1 rounded-full text-xs font-bold mb-2">14 Şubat 2026</span>
+                    <h3 class="text-xl font-bold text-gray-800">Bugün</h3>
+                    <p class="text-gray-600 mt-2 text-sm leading-relaxed">Sayısız engeli aştık. Birbirimizin zor günlerinde yanında olduk. Birbirimize örtü olduk, kusurlarımızı örttük. Kah küsüştük kah seviştik ama her zaman sonuç aynıydı, biz bizsiz yapamıyoruz. Sevgililer günün kutlu olsun motka bubu. Sen benim her şeyimsin.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- 3. NEDEN -->
+    <!-- PROJECT SCHEDULE -->
     <section id="reasons" class="page-section min-h-screen pt-24 px-4 pb-20">
-        <h2 class="text-4xl text-center text-red-600 mb-8 romantic-font">Neden Sen?</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto mb-12">
-            <div class="glass-card p-6 text-center">
-                <i data-lucide="smile" class="w-10 h-10 text-red-400 mx-auto mb-3"></i>
-                <h3 class="font-bold text-lg mb-2">Gülüşün</h3>
-                <p class="text-sm text-gray-600">En kötü günümü bile aydınlatan o gülüşün.</p>
-            </div>
-            <div class="glass-card p-6 text-center">
-                <i data-lucide="sun" class="w-10 h-10 text-red-400 mx-auto mb-3"></i>
-                <h3 class="font-bold text-lg mb-2">Enerjin</h3>
-                <p class="text-sm text-gray-600">Hayatıma kattığın renk.</p>
-            </div>
-        </div>
-        <h2 class="text-3xl text-center text-red-600 mb-6 romantic-font">Gelecek Listemiz</h2>
+        <h2 class="text-4xl text-center text-red-600 mb-8 romantic-font">İlerleme</h2>
         <div class="glass-card p-6 max-w-2xl mx-auto">
             <ul class="space-y-4">
-                <li class="flex items-start gap-3"><div class="mt-1 min-w-[24px] w-6 h-6 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-xs">✓</div><span class="text-gray-500 line-through">Veletlerin adını FSMVÜ oldurmak</span></li>
+                <li class="flex items-start gap-3"><div class="mt-1 min-w-[24px] w-6 h-6 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-xs">✓</div><span class="text-gray-500 line-through">Veletlerin adını Fatih Sultan Mehmet Vakıf Üniversitesi oldurmak</span></li>
                 <li class="flex items-start gap-3"><div class="mt-1 min-w-[24px] w-6 h-6 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-xs">✓</div><span class="text-gray-500 line-through">Yağmurlu soğuk bir sonbahar akşamı metrobüs gişesinde sarılmak</span></li>
                 <li class="flex items-start gap-3"><div class="mt-1 min-w-[24px] w-6 h-6 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-xs">✓</div><span class="text-gray-500 line-through">Birlikte yemek yapmak</span></li>
                 <li class="flex items-start gap-3"><div class="mt-1 min-w-[24px] w-6 h-6 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-xs">✓</div><span class="text-gray-500 line-through">Birlikte Harry Potter izlemek</span></li>
                 <li class="flex items-start gap-3"><div class="mt-1 min-w-[24px] w-6 h-6 rounded-full border-2 border-red-300 text-red-400 flex items-center justify-center text-xs"></div><span class="text-gray-700">Galata kulesine çıkmak</span></li>
-                <li class="flex items-start gap-3"><div class="mt-1 min-w-[24px] w-6 h-6 rounded-full border-2 border-red-300 text-red-400 flex items-center justify-center text-xs"></div><span class="text-gray-700">İlginç ritüellerle düğün yapıp altınları toplamak</span></li>
+                <li class="flex items-start gap-3"><div class="mt-1 min-w-[24px] w-6 h-6 rounded-full border-2 border-red-300 text-red-400 flex items-center justify-center text-xs"></div><span class="text-gray-700">Bir gün sen beyaz gösterişli bir kıyafet ve ben takım elbise giyip sabahtan akşama kadar zaman içerisinde birikerek artan ilginç ritüeller gerçekleştirip akşam da akrabalarımızı doyurup onlardan altın almak</span></li>
                 <li class="flex items-start gap-3"><div class="mt-1 min-w-[24px] w-6 h-6 rounded-full border-2 border-red-300 text-red-400 flex items-center justify-center text-xs"></div><span class="text-gray-700">Üst seviye insan olmak</span></li>
-                <li class="flex items-start gap-3"><div class="mt-1 min-w-[24px] w-6 h-6 rounded-full border-2 border-red-300 text-red-400 flex items-center justify-center text-xs"></div><span class="text-gray-700">Birbirini seven yaşlılar olmak</span></li>
+                <li class="flex items-start gap-3"><div class="mt-1 min-w-[24px] w-6 h-6 rounded-full border-2 border-red-300 text-red-400 flex items-center justify-center text-xs"></div><span class="text-gray-700">Reelslerde gördüğümüz tarzda birbirini seven yaşlılar olmak</span></li>
                 <li class="flex items-start gap-3"><div class="mt-1 min-w-[24px] w-6 h-6 rounded-full border-2 border-red-300 text-red-400 flex items-center justify-center text-xs"></div><span class="text-gray-700">Sonsuza kadar rahat içinde akıp gitmek</span></li>
             </ul>
         </div>
     </section>
 
-    <!-- 4. ANILAR (DRAGGABLE TABLE) -->
+    <!-- GERÇEK EĞLENCE -->
     <section id="gallery" class="page-section min-h-screen pt-24 px-4 pb-20">
-        <h2 class="text-5xl text-center text-red-800 mb-6 romantic-font drop-shadow-lg" style="text-shadow: 2px 2px 4px #000;">Karanlık Anılar</h2>
-        <p class="text-center text-gray-400 text-sm mb-4 italic">(Fotoğrafları dağıtmak için sürükle)</p>
+        <h2 class="text-5xl text-center text-red-800 mb-6 romantic-font drop-shadow-lg" style="text-shadow: 2px 2px 4px #000;">Gerçek Eğlence</h2>
         
-        <!-- Fotoğrafların üst üste yığılacağı alan -->
-        <div id="photo-pile-container">
-            <!-- JS ile doldurulacak -->
+        <div id="photo-pile-container"></div>
+
+        <div class="glass-card p-6 mt-8 text-center relative max-w-lg mx-auto border-red-900/50">
+            <i data-lucide="sparkles" class="w-8 h-8 text-red-800 mx-auto mb-2 animate-pulse"></i>
+            <p class="text-gray-300 italic text-xl font-serif">"siyah beyaz hayatımdaki gök kuşağı sensin"</p>
         </div>
 
-        <div class="glass-card p-6 mt-8 text-center relative max-w-lg mx-auto">
-            <i data-lucide="ghost" class="w-8 h-8 text-red-800 mx-auto mb-2 animate-bounce"></i>
-            <p class="text-gray-300 italic text-sm font-serif">
-                "Bu masada anılarımız dağınık ama ruhlarımız birleşik. Karanlığın içinde parlayan tek şey sensin."
-            </p>
+        <!-- GAMBLING (SLOT MAKİNESİ) -->
+        <div class="mt-16 text-center">
+            <h3 class="text-3xl text-red-800 romantic-font mb-8 drop-shadow-md uppercase tracking-widest" style="text-shadow: 1px 1px 2px #000;">gambling</h3>
+            
+            <div class="slot-machine-container">
+                <div class="slot-machine">
+                    <div class="siren"></div>
+                    <div class="slot-top"></div>
+                    
+                    <div class="window">
+                        <div class="reel" id="reel1">I</div>
+                        <div class="reel" id="reel2">LOVE</div>
+                        <div class="reel" id="reel3">YOU</div>
+                    </div>
+
+                    <div class="lever-container">
+                        <div class="lever-base"></div>
+                        <div id="leverStick" class="lever-stick">
+                            <div class="lever-ball" onclick="spin()"></div>
+                        </div>
+                    </div>
+                    <div class="base-plate"></div>
+                </div>
+
+                <div class="slot-controls">
+                    <div class="slot-message" id="status"></div>
+                    <button id="spinBtn" onclick="spin()">ÇEVİR</button>
+                </div>
+            </div>
         </div>
     </section>
 
     <!-- NAVİGASYON -->
     <nav class="bottom-nav">
-        <div class="nav-item active" onclick="showPage('home', this)"><i data-lucide="home" width="20"></i><span>Ev</span></div>
+        <div class="nav-item active" onclick="showPage('home', this)"><i data-lucide="home" width="20"></i><span>Sayıcı</span></div>
         <div class="nav-item" onclick="showPage('story', this)"><i data-lucide="calendar-heart" width="20"></i><span>Hikaye</span></div>
-        <div class="nav-item" onclick="showPage('reasons', this)"><i data-lucide="star" width="20"></i><span>Neden?</span></div>
-        <div class="nav-item" onclick="showPage('gallery', this)"><i data-lucide="skull" width="20"></i><span>Anılar</span></div>
+        <div class="nav-item" onclick="showPage('reasons', this)"><i data-lucide="list-todo" width="20"></i><span>Project Schedule</span></div>
+        <div class="nav-item" onclick="showPage('gallery', this)"><i data-lucide="skull" width="20"></i><span>Gerçek Eğlence</span></div>
     </nav>
 
     <script>
         lucide.createIcons();
 
-        // --- ŞİFRELEME ---
+        // --- ŞİFRELEME (1503) ---
         async function sha256(message) {
             const msgBuffer = new TextEncoder().encode(message);
             const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
@@ -378,17 +398,15 @@
         }
         async function checkPassword() {
             const input = document.getElementById("passwordInput").value;
-            const targetHash = "a3513549948fbfecfa1ff0300bf3339f9b1ebff77c9fc831b3c83236a4814d61"; // 1503
+            const targetHash = "a3513549948fbfecfa1ff0300bf3339f9b1ebff77c9fc831b3c83236a4814d61";
             const inputHash = await sha256(input);
             if (inputHash === targetHash) {
                 document.getElementById("login-overlay").style.opacity = "0";
                 setTimeout(() => { document.getElementById("login-overlay").style.display = "none"; }, 500);
-            } else {
-                document.getElementById("errorMsg").classList.remove("hidden");
-            }
+            } else { document.getElementById("errorMsg").classList.remove("hidden"); }
         }
 
-        // --- SAYFA GEÇİŞ ---
+        // --- SAYFA YÖNETİMİ ---
         function showPage(pageId, element) {
             const body = document.body;
             if (pageId === 'gallery') body.classList.add('dark-mode');
@@ -396,154 +414,110 @@
 
             document.querySelectorAll('.page-section').forEach(page => page.classList.remove('active'));
             document.getElementById(pageId).classList.add('active');
-
             document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
             element.classList.add('active');
-            
             lucide.createIcons();
             window.scrollTo(0,0);
         }
 
-        // --- SÜRÜKLE BIRAK GALERİ SİSTEMİ ---
-        const photoLinks = [
-            "137BVI9eDtTIuiPaB3xfxH2cAw2LDHi9M", "14PoGpQy4B8G5TDNlD89LP5m9iYczE1SE", 
-            "1AsoKiNJkGO7QceIjXNKSK6G79XBV8FNi", "1HYm_yzQudfgXPUdqLPlQHjHYS-ynIGAe", 
-            "1NbGUecdF8b0VRM9H_GkuzwWTgjtxqMf1", "1OT3U5B3-RYM3H0mVJQF6d9-2nWRiQjFV", 
-            "1PA1-Ri702e7DCWLRMHV_RWT4s_EThfbn", "1W-LOTRJtlwG_ZXQ8bjxHnOzN7ys2FMx5", 
-            "1fJVxzCCXB92eBMuU7BwqNzvhEsvZgccJ", "1jyvfWPsOk_f6KBCJJ0vfmNqu_Vhg4GMC", 
-            "1yxb9v_Axx-J5tAmUQHSV77pCInue2sMx"
-        ];
+        // --- FOTOĞRAF KÜMESİ ---
+        const photoIds = ["137BVI9eDtTIuiPaB3xfxH2cAw2LDHi9M", "14PoGpQy4B8G5TDNlD89LP5m9iYczE1SE", "1AsoKiNJkGO7QceIjXNKSK6G79XBV8FNi", "1HYm_yzQudfgXPUdqLPlQHjHYS-ynIGAe", "1NbGUecdF8b0VRM9H_GkuzwWTgjtxqMf1", "1OT3U5B3-RYM3H0mVJQF6d9-2nWRiQjFV", "1PA1-Ri702e7DCWLRMHV_RWT4s_EThfbn", "1W-LOTRJtlwG_ZXQ8bjxHnOzN7ys2FMx5", "1fJVxzCCXB92eBMuU7BwqNzvhEsvZgccJ", "1jyvfWPsOk_f6KBCJJ0vfmNqu_Vhg4GMC", "1yxb9v_Axx-J5tAmUQHSV77pCInue2sMx"];
+        const pile = document.getElementById("photo-pile-container");
+        let topZ = 100;
 
-        const pileContainer = document.getElementById("photo-pile-container");
-        let highestZ = 10; // Sürüklenen öğeyi en üste getirmek için sayaç
-
-        // Fotoğrafları oluştur ve sahneye at
-        photoLinks.forEach((id, index) => {
-            const photoDiv = document.createElement("div");
-            photoDiv.classList.add("draggable-photo");
+        photoIds.forEach((id, i) => {
+            const div = document.createElement("div");
+            div.className = "draggable-photo";
+            div.style.left = `calc(50% - 90px + ${Math.random()*40-20}px)`;
+            div.style.top = `calc(50% - 110px + ${Math.random()*40-20}px)`;
+            div.style.transform = `rotate(${Math.random()*30-15}deg)`;
+            div.style.zIndex = i + 1;
             
-            // Başlangıçta hepsi ortada ama hafif dağınık olsun
-            const randomRotation = Math.random() * 20 - 10; // -10 ile 10 derece arası
-            const randomX = Math.random() * 40 - 20; // Hafif sağa sola kayık
-            const randomY = Math.random() * 40 - 20;
-            
-            // Konumlandırma (Ortala)
-            photoDiv.style.left = "calc(50% - 100px)"; // 200px genişlik / 2
-            photoDiv.style.top = "calc(50% - 120px)";
-            photoDiv.style.transform = `translate(${randomX}px, ${randomY}px) rotate(${randomRotation}deg)`;
-            photoDiv.style.zIndex = index + 1;
-
             const img = document.createElement("img");
-            img.src = `https://drive.google.com/uc?export=view&id=${id}`;
-            img.setAttribute("draggable", "false"); // Resmin varsayılan sürüklenmesini kapat
-
-            photoDiv.appendChild(img);
-            pileContainer.appendChild(photoDiv);
-
-            makeDraggable(photoDiv);
+            img.src = `https://lh3.googleusercontent.com/d/${id}`;
+            img.onerror = () => { img.src = "https://via.placeholder.com/200x250?text=Bubu+Dudu"; };
+            
+            div.appendChild(img);
+            pile.appendChild(div);
+            dragElement(div);
         });
 
-        function makeDraggable(element) {
-            let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+        function dragElement(elm) {
+            let p1 = 0, p2 = 0, p3 = 0, p4 = 0;
+            elm.onmousedown = (e) => { e.preventDefault(); p3 = e.clientX; p4 = e.clientY; elm.style.zIndex = ++topZ; document.onmouseup = () => { document.onmouseup = null; document.onmousemove = null; }; document.onmousemove = (e) => { e.preventDefault(); p1 = p3 - e.clientX; p2 = p4 - e.clientY; p3 = e.clientX; p4 = e.clientY; elm.style.top = (elm.offsetTop - p2) + "px"; elm.style.left = (elm.offsetLeft - p1) + "px"; }; };
+            elm.ontouchstart = (e) => { const t = e.touches[0]; p3 = t.clientX; p4 = t.clientY; elm.style.zIndex = ++topZ; document.ontouchend = () => { document.ontouchend = null; document.ontouchmove = null; }; document.ontouchmove = (e) => { const t = e.touches[0]; p1 = p3 - t.clientX; p2 = p4 - t.clientY; p3 = t.clientX; p4 = t.clientY; elm.style.top = (elm.offsetTop - p2) + "px"; elm.style.left = (elm.offsetLeft - p1) + "px"; }; };
+        }
 
-            element.onmousedown = dragMouseDown;
-            element.ontouchstart = dragTouchStart; // Mobil destek
+        // --- SLOT MAKİNESİ ---
+        const fruitSymbols = ["🍒", "7️⃣", "🔔"]; 
+        const heartSymbolStr = "❤️";
+        const r1data = [...fruitSymbols, heartSymbolStr, heartSymbolStr, "I", "I", "I", "I", "I"];
+        const r2data = [...fruitSymbols, heartSymbolStr, heartSymbolStr, "LOVE", "LOVE", "LOVE", "LOVE", "LOVE"];
+        const r3data = [...fruitSymbols, heartSymbolStr, heartSymbolStr, "YOU", "YOU", "YOU", "YOU", "YOU"];
+        let isSpinningSlot = false;
 
-            function dragMouseDown(e) {
-                e = e || window.event;
-                e.preventDefault();
-                pos3 = e.clientX;
-                pos4 = e.clientY;
-                element.style.zIndex = ++highestZ; // Tıklananı en üste al
-                document.onmouseup = closeDragElement;
-                document.onmousemove = elementDrag;
-            }
+        function spin() {
+            if (isSpinningSlot) return; 
+            isSpinningSlot = true;
+            document.getElementById('spinBtn').disabled = true;
+            document.getElementById('status').innerText = "";
+            document.getElementById('leverStick').classList.add('lever-pulled');
+            setTimeout(() => document.getElementById('leverStick').classList.remove('lever-pulled'), 500);
 
-            function elementDrag(e) {
-                e = e || window.event;
-                e.preventDefault();
-                pos1 = pos3 - e.clientX;
-                pos2 = pos4 - e.clientY;
-                pos3 = e.clientX;
-                pos4 = e.clientY;
-                element.style.top = (element.offsetTop - pos2) + "px";
-                element.style.left = (element.offsetLeft - pos1) + "px";
-                element.style.transform = "rotate(0deg) scale(1.05)"; // Sürüklerken düzelt
-            }
+            const rls = [document.getElementById('reel1'), document.getElementById('reel2'), document.getElementById('reel3')];
+            rls.forEach(r => { r.innerHTML = ""; r.classList.add('blur'); });
 
-            function closeDragElement() {
-                document.onmouseup = null;
-                document.onmousemove = null;
-                // Bırakınca hafif rastgele bir açı vererek doğal dursun
-                const randomRot = Math.random() * 10 - 5;
-                element.style.transform = `rotate(${randomRot}deg) scale(1)`;
-            }
+            const res = [r1data[Math.floor(Math.random()*r1data.length)], r2data[Math.floor(Math.random()*r2data.length)], r3data[Math.floor(Math.random()*r3data.length)]];
+            [300, 550, 800].forEach((delay, i) => {
+                setTimeout(() => {
+                    rls[i].classList.remove('blur');
+                    // "I" harfi için de word-symbol class'ını zorunlu kıldık (Font sorunu çözümü)
+                    if (res[i] === heartSymbolStr) {
+                        rls[i].innerHTML = `<span class="heart-symbol">${res[i]}</span>`;
+                    } else if (res[i] === "I" || res[i] === "LOVE" || res[i] === "YOU") {
+                        rls[i].innerHTML = `<span class="word-symbol">${res[i]}</span>`;
+                    } else {
+                        rls[i].innerHTML = res[i];
+                    }
 
-            // --- MOBİL DOKUNMATİK DESTEĞİ ---
-            function dragTouchStart(e) {
-                const touch = e.touches[0];
-                pos3 = touch.clientX;
-                pos4 = touch.clientY;
-                element.style.zIndex = ++highestZ;
-                document.ontouchend = closeDragElement;
-                document.ontouchmove = elementTouchDrag;
-            }
-
-            function elementTouchDrag(e) {
-                const touch = e.touches[0];
-                pos1 = pos3 - touch.clientX;
-                pos2 = pos4 - touch.clientY;
-                pos3 = touch.clientX;
-                pos4 = touch.clientY;
-                element.style.top = (element.offsetTop - pos2) + "px";
-                element.style.left = (element.offsetLeft - pos1) + "px";
-                element.style.transform = "rotate(0deg) scale(1.05)";
-            }
+                    if (i === 2) { 
+                        isSpinningSlot = false; document.getElementById('spinBtn').disabled = false;
+                        if(res[0] === heartSymbolStr && res[1] === heartSymbolStr && res[2] === heartSymbolStr) { confetti(); }
+                        else if(res[0] === "I" && res[1] === "LOVE" && res[2] === "YOU") { confetti(); setTimeout(confetti, 1000); }
+                        else if(res[0] === res[1] && res[1] === res[2]) { confetti(); }
+                    }
+                }, delay);
+            });
         }
 
         // --- TARİH SAYACI ---
-        const startDate = new Date(2024, 2, 15); 
-        function updateCounter() {
-            const now = new Date();
-            const diff = now - startDate;
-            if (diff < 0) return;
-            document.getElementById("days").innerText = Math.floor(diff / (1000 * 60 * 60 * 24));
-            document.getElementById("hours").innerText = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            document.getElementById("minutes").innerText = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            document.getElementById("seconds").innerText = Math.floor((diff % (1000 * 60)) / 1000);
-        }
-        setInterval(updateCounter, 1000);
-        updateCounter();
+        setInterval(() => {
+            const diff = new Date() - new Date(2024, 2, 15); if (diff < 0) return;
+            document.getElementById("days").innerText = Math.floor(diff / 8.64e7);
+            document.getElementById("hours").innerText = Math.floor((diff % 8.64e7) / 3.6e6);
+            document.getElementById("minutes").innerText = Math.floor((diff % 3.6e6) / 6e4);
+            document.getElementById("seconds").innerText = Math.floor((diff % 6e4) / 1e3);
+        }, 1000);
 
-        // --- YOUTUBE ---
-        var player; var isPlaying = false; var musicBtn = document.getElementById("musicBtn");
+        // --- MÜZİK ---
+        var player, isPlay = false;
         var tag = document.createElement('script'); tag.src = "https://www.youtube.com/iframe_api";
-        var firstScriptTag = document.getElementsByTagName('script')[0]; firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-        function onYouTubeIframeAPIReady() {
-            player = new YT.Player('youtube-player', {
-                height: '1', width: '1', videoId: 'qU9mHegkTc4',
-                playerVars: { 'autoplay': 0, 'controls': 0, 'disablekb': 1, 'fs': 0, 'loop': 1, 'playlist': 'qU9mHegkTc4', 'origin': window.location.origin },
-                events: { 'onReady': onPlayerReady }
-            });
-        }
-        function onPlayerReady(event) { console.log("Müzik hazır."); }
+        document.body.appendChild(tag);
+        function onYouTubeIframeAPIReady() { player = new YT.Player('youtube-player', { height: '1', width: '1', videoId: 'qU9mHegkTc4', playerVars: { 'autoplay': 0, 'controls': 0, 'loop': 1, 'playlist': 'qU9mHegkTc4', 'origin': window.location.origin } }); }
         function toggleMusic() {
             if (!player || typeof player.playVideo !== 'function') return;
-            if (isPlaying) { player.pauseVideo(); musicBtn.classList.remove("spin"); musicBtn.innerHTML = '<i data-lucide="music" class="text-red-500"></i>'; }
-            else { player.playVideo(); musicBtn.classList.add("spin"); musicBtn.innerHTML = '<i data-lucide="pause" class="text-red-500"></i>'; }
-            lucide.createIcons(); isPlaying = !isPlaying;
+            const btn = document.getElementById("musicBtn");
+            if (isPlay) { player.pauseVideo(); btn.classList.remove("spin"); btn.innerHTML = '<i data-lucide="music" class="text-red-500"></i>'; }
+            else { player.playVideo(); btn.classList.add("spin"); btn.innerHTML = '<i data-lucide="pause" class="text-red-500"></i>'; }
+            lucide.createIcons(); isPlay = !isPlay;
         }
 
-        function createHeart() {
-            const heart = document.createElement("div");
-            heart.classList.add("floating-heart");
-            heart.innerHTML = "❤";
-            heart.style.left = Math.random() * 100 + "vw";
-            heart.style.animationDuration = Math.random() * 2 + 3 + "s";
-            document.getElementById("hearts-container").appendChild(heart);
-            setTimeout(() => { heart.remove(); }, 5000);
-        }
-        setInterval(createHeart, 400);
+        // --- KALPLER ---
+        setInterval(() => {
+            const heartDivObj = document.createElement("div"); heartDivObj.className = "floating-heart"; heartDivObj.innerHTML = "❤";
+            heartDivObj.style.left = Math.random() * 100 + "vw"; heartDivObj.style.animationDuration = Math.random() * 2 + 3 + "s";
+            document.getElementById("hearts-container").appendChild(heartDivObj); setTimeout(() => heartDivObj.remove(), 5000);
+        }, 400);
     </script>
 </body>
 </html>
